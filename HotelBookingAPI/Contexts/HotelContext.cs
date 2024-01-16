@@ -12,6 +12,7 @@ namespace HotelBookingAPI.Contexts
         public DbSet<User>? users { get; set; }
         public DbSet<Hotel>? hotels { get; set; }
         public DbSet<Rooms>? rooms { get; set; }
+        public DbSet<Bookings>? bookinggs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +21,10 @@ namespace HotelBookingAPI.Contexts
             modelBuilder.Entity<Hotel>().HasData(
                 new Hotel { HotelId= 101,HotelName="Paradise Hotel", Location="Pune",TotalRooms=10,Description="Luxurious hotel with world-class amenities,food,and entertainment",Ratings=4.5 }
                 );
+            modelBuilder.Entity<Bookings>().HasData(
+                        new Bookings { BookingId = 910, BookingDate = new DateTime(2015, 12, 25), HotelId = 102, RoomSize = "Suite", UserId = 1,Price=2970.99}
+                               );
+
             modelBuilder.Entity<Rooms>().HasData(
                new Rooms { RoomNumber = 1011, RoomSize = "Suite", HotelId = 101, IsBooked = true, Price = 1900.99 },
                  new Rooms { RoomNumber = 1012, RoomSize = "Double", HotelId = 101, IsBooked = false, Price = 970.99 },

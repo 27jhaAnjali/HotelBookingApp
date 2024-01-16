@@ -39,6 +39,7 @@ namespace HotelBookingAPI.Repositories
             return myUser;
         }
 
+
         public IList<User> GetAll()
         {
             var users= _context.users.ToList(); 

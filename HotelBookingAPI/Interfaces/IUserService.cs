@@ -5,8 +5,9 @@ namespace HotelBookingAPI.Interfaces
 {
     public interface IUserService
     {
-        public UserDTO? UserSignIn(UserDTO user);
+        public UserDTO? UserSignIn(LoginDTO user);
         public UserDTO UserSignUp(UserDTO user);
 
+        public User? GetMyUser();
     }
 }

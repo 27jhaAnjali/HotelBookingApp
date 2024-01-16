@@ -1,6 +1,9 @@
-﻿using HotelBookingAPI.Interfaces;
+﻿using HotelBookingAPI.Contexts;
+using HotelBookingAPI.Interfaces;
 using HotelBookingAPI.Models;
 using HotelBookingAPI.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,17 +13,27 @@ namespace HotelBookingAPI.Services
     {
         private readonly IRepository<string, User> _repository;
         private readonly ITokenService _tokenService;
+        private readonly IHttpContextAccessor _context;
 
-        public UserService(IRepository<string,User> repository,ITokenService tokenService)
+        public UserService(IRepository<string,User> repository,ITokenService tokenService, IHttpContextAccessor context)
         {
             _repository=repository;
             _tokenService = tokenService;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public UserDTO? UserSignIn(UserDTO user)
+
+        public User? GetMyUser()
+        {
+            var myUserName= _context.HttpContext.User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
+            var myUSer=_repository.GetAll().FirstOrDefault(x=>x.UserName== myUserName);
+            return myUSer;
+        }
+
+        public UserDTO? UserSignIn(LoginDTO user)
         {
             var isMyUser = _repository.Get(user.UserEmail);  //we get the user data with the entered name if it exists in the database
             var DbPassword = isMyUser.Password;
-            HMACSHA512 hMACSHA512 = new HMACSHA512(isMyUser.Key); // we create an object of encryption algo using the encryption key of user in the database
+            HMACSHA512 hMACSHA512 = new HMACSHA512(isMyUser.Key); //we create an object of encryption algo using the encryption key of user in the database
             var encryptedUserPassword = hMACSHA512.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
             if (DbPassword.Length == encryptedUserPassword.Length)
             {

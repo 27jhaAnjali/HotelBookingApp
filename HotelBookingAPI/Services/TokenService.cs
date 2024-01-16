@@ -23,7 +23,7 @@ namespace HotelBookingAPI.Services
             });
             var tokenDescription = new SecurityTokenDescriptor(); 
             tokenDescription.Subject = subject;
-            tokenDescription.Expires = DateTime.UtcNow.AddMinutes(5);
+            tokenDescription.Expires = DateTime.UtcNow.AddMinutes(20);
             var signature = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
             tokenDescription.SigningCredentials = signature;
             var tokenHandler = new JwtSecurityTokenHandler();

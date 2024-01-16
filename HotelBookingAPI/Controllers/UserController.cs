@@ -1,7 +1,11 @@
 ﻿using HotelBookingAPI.Interfaces;
 using HotelBookingAPI.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace HotelBookingAPI.Controllers
 {
@@ -18,11 +22,11 @@ namespace HotelBookingAPI.Controllers
 
         [HttpPost("Login")]
 
-        public ActionResult Login(UserDTO user)
+        public ActionResult Login(LoginDTO user)
         {
             var myUser= _service.UserSignIn(user);
             if(myUser != null)
-            {
+            { 
                 return Ok(myUser);
             }
             return Unauthorized();
@@ -39,5 +43,24 @@ namespace HotelBookingAPI.Controllers
             }
             return BadRequest();
         }
+
+     
+        [HttpPost("GetCurrent")]
+        public ActionResult GetMeMyUser()
+        {
+            try
+            {
+                var user = _service.GetMyUser();
+              
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+           
+       
     }
-}
+    }
+

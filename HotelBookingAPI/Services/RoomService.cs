@@ -2,6 +2,7 @@
 using HotelBookingAPI.Models;
 using HotelBookingAPI.Models.DTOs;
 using HotelBookingAPI.Repositories;
+using HotelBookingAPI.Utilities.Exceptions;
 
 namespace HotelBookingAPI.Services
 {
@@ -40,9 +41,9 @@ namespace HotelBookingAPI.Services
             return myRoom;
         }
 
-        public IList<Rooms> GetRoomsByAvailability(int id, bool status)
+        public IList<Rooms> GetRoomsByAvailability(int hotelId)
         {
-            var myHotel = GetAllRoomsOfHotel(id).ToList();
+            var myHotel = GetAllRoomsOfHotel(hotelId).ToList();
             List<Rooms> rooms = new List<Rooms>();
             foreach (var room in myHotel)
             {
@@ -51,7 +52,7 @@ namespace HotelBookingAPI.Services
             return rooms;
         }
 
-        public IList<Rooms> GetRoomsBySize(int id, string size)
+        public IList<Rooms>? GetRoomsBySize(int id, string size)
         {
             var myHotel = GetAllRoomsOfHotel(id).ToList();
             List<Rooms> rooms = new List<Rooms>();
@@ -68,8 +69,20 @@ namespace HotelBookingAPI.Services
            foreach(var rooms in myRooms)
             {
                 rooms.Price = room.Price;
+                _repository.Update(rooms);
             }
            return myRooms.ToList();
+        }
+        public Rooms UpdateRoomStatus(int hotelID,int roomNumber,bool isBooked)
+        {
+            var myRoom = _repository.Get(roomNumber, hotelID);
+            if (myRoom != null)
+            {
+                _repository.Update(myRoom);
+                return myRoom;
+            }
+            else
+                throw new RoomNotFoundException();
         }
     }
 }
